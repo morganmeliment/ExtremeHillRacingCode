@@ -1,0 +1,5 @@
+{
+    "StoreKit.framework": 1,
+    "Foundation.framework": 1,
+    "UIKit.framework": 1
+}

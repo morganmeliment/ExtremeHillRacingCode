@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<!--
+    Licensed to the Apache Software Foundation (ASF) under one
+    or more contributor license agreements.  See the NOTICE file
+    distributed with this work for additional information
+    regarding copyright ownership.  The ASF licenses this file
+    to you under the Apache License, Version 2.0 (the
+    "License"); you may not use this file except in compliance
+    with the License.  You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+     KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.
+-->
+<html>
+    <head>
+        <!--
+        Customize this policy to fit your own app's needs. For more guidance, see:
+            https://github.com/apache/cordova-plugin-whitelist/blob/master/README.md#content-security-policy
+        Some notes:
+            * gap: is required only on iOS (when using UIWebView) and is needed for JS->native communication
+            * https://ssl.gstatic.com is required only on Android and is needed for TalkBack to function properly
+            * Disables use of inline scripts in order to mitigate risk of XSS vulnerabilities. To change this:
+                * Enable inline JS: add 'unsafe-inline' to default-src
+       
+        <meta http-equiv="Content-Security-Policy" content="default-src 'self' data: gap: https://ssl.gstatic.com 'unsafe-eval'; style-src 'self' 'unsafe-inline'; media-src *"> -->
+        <meta name="format-detection" content="telephone=no">
+        <meta name="msapplication-tap-highlight" content="no">
+        <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width">
+        <!--<link rel="stylesheet" type="text/css" href="css/index.css">-->
+        <title>Extreme Hill Racing</title>
+        <style>
+            * {
+                margin: 0px;
+                -webkit-user-select: none;
+            }
+            canvas {
+                position: fixed;
+                bottom: 0;
+            }
+            .lootVal {
+                position: fixed;
+                z-index: 2;
+                display: block;
+                left: 80%;
+                font-size: 10px;
+                color: white;
+                font-family: -apple-system;
+                top: 3.3%;
+            }
+            #coinVal {
+                top: 7.7%;
+            }
+        </style>
+    </head>
+    <body>
+        <script type = "text/javascript" src = "js/jquery-3.1.1.min.js"></script>
+
+        <div id = "shadeTransition" style = "position: fixed; z-index: 3000; width: 100%; height: 100%; top: 0px; left: 0px; background-color: black;"></div>
+
+        <div id = "mainScreen1">
+            <img src = "img/menuOneBG.png" style = "position: fixed; width: 100%; height: 100%;">
+            <img src = "img/b3.png" style = "position: fixed; height: 8%; left: 3.5%; z-index: 2; top: 5.3%; display: none;">
+            <p class = "lootVal" id = "starVal">75</p>
+            <p class = "lootVal" id = "coinVal">4,359</p>
+            <img src = "img/storeIcon.png" style = "position: fixed; right: 3%; top: 3%; height: 9%; cursor: pointer; z-index: 15;" class = "btnHover" id = "storeICN">
+            <div id = "cantAfford" style = "position: fixed; width: 100%; height: 100%; background-color: rgba(0,0,0,0.3); z-index: 90; display: none;">
+                <img src = "img/mrMoneyBags.png" style = "position: fixed; left: 50%; top: 50%; -webkit-transform: translate(-50%, -50%); height: 70%; z-index: 1; pointer-events: none;" id = "moneyBags">
+            </div>
+            <div id = "menuOneSectionOne" style = "position: fixed; width: 100%; height: 100%; bottom: 0px; margin-left: 0%;">
+                <img src = "img/hillLevelPromo.png" style = "position: absolute; height: 55%; left: 12%; bottom: 22%; z-index: 2; cursor: pointer;" class = "btnHover" id = "hillLevelPromo">
+                <img src = "img/TBDPromo.png" style = "position: absolute; height: 55%; left: 50%; bottom: 22%; z-index: 2; cursor: pointer; -webkit-transform: translate(-50%);" class = "btnHover">
+                <img src = "img/TBDPromo.png" style = "position: absolute; height: 55%; right: 12%; bottom: 22%; z-index: 2; cursor: pointer;" class = "btnHover">
+                <img src = "img/rateUsBtn.png" style = "position: absolute; height: 14%; right: 4%; bottom: 4%; z-index: 2; cursor: pointer;" class = "btnHover">
+                <img src = "img/backArrow.png" style = "-webkit-transform: scaleX(-1) translate(0%, -50%); position: absolute; height: 8%; right: 3.5%; z-index: 2; top: 50%; cursor: pointer;" id = "menuNextPage">
+            </div>
+            <div id = "menuOneSectionTwo" style = "position: fixed; width: 100%; height: 100%; bottom: 0px; margin-left: 100%; z-index: 7;">
+                <img src = "img/5000coin.png" style = "position: absolute; z-index: 50; width: 35%; left: 50%; top: 50%; -webkit-transform: translate(-50%, -50%); display: none;" id = "coinAmount">
+                <img src = "img/backArrow.png" style = "-webkit-transform: translate(0%, -50%); position: absolute; height: 8%; left: 3.5%; z-index: 2; top: 50%; cursor: pointer;" id = "menuNextPage2">
+                <img src = "img/cratesBG.png" style = "-webkit-transform: translate(-50%, -50%); position: absolute; width: 70%; left: 50%; z-index: 2; top: 49%; cursor: pointer;">
+
+                <div id = "openConfirmScreen" style = "position: fixed; width: 100%; height: 100%; background-color: rgba(0,0,0,0.3); z-index: 3; display: none; z-index: 50;">
+                    <img src = "img/openCrateConfirm.png" style = "position: fixed; left: 50%; top: 50%; -webkit-transform: translate(-50%, -50%); height: 70%; z-index: 1;" id = "crateConfirmBG">
+                    <p id = "openCost" style = "position: fixed; color: black; font-family: -apple-system; font-size: 15px; font-weight: bold; display: block; top: 56%; left: 50%; -webkit-transform: translate(-50%, -50%); z-index: 2;">Cost: 3 Stars</p>
+                    <div id = "openSelector" style = "position: fixed; background-color: rgba(0,0,0,0.3); opacity: 0; height: 9.8%; width: 16%; left: 30.5%; top: 65.9%; z-index: 2; cursor: pointer;"></div>
+                    <div id = "stopSelector" style = "position: fixed; background-color: rgba(0,0,0,0.3); opacity: 0; height: 9.8%; width: 16%; right: 32.2%; top: 65.9%; z-index: 2; cursor: pointer;"></div>
+                </div>
+
+                <div id = "crateOneSection" style = "position: absolute; width: 16%; height: 28.45%; left: 16%; top: 37.2%; z-index: 6; cursor: pointer;">
+                    <img src = "img/plusCrate.png" style = "position: absolute; left: 50%; top: 50%; -webkit-transform: translate(-50%, -50%); width: 40%; display: none;" id = "c1plus">
+                    <div id = "c1Active" style = "display: none;">
+                        <p id = "c1timeText" style = "position: absolute; text-align: center; color: white; font-size: 10px; width: 100%; top: 6%; font-family: -apple-system;">4:02 Remaining</p>
+                        <img src = "img/spaceCrate.png" style = "position: absolute; height: 50%; top: 50%; left: 50%; -webkit-transform: translate(-50%, -50%);" id = "c1ActiveIMG">
+                        <p id = "c1openText" style = "position: absolute; text-align: center; color: white; font-size: 8px; width: 70%; top: 80%; left: 15%; font-family: -apple-system; font-weight: bold;">Open Now For 6 Stars!</p>
+                    </div>
+                    <div id = "c1Closed" style = "display: none;">
+                        <p id = "c1startText" style = "position: absolute; text-align: center; color: white; font-size: 10px; width: 100%; top: 6%; font-family: -apple-system; font-weight: bold;">Start!</p>
+                        <img src = "img/spaceCrate.png" style = "position: absolute; height: 50%; top: 50%; left: 50%; -webkit-transform: translate(-50%, -50%);" id = "c1ClosedIMG">
+                    </div>
+                    <div id = "c1Finished" style = "display: block;">
+                        <p id = "c1finishedText" style = "position: absolute; text-align: center; color: white; font-size: 10px; width: 100%; top: 6%; font-family: -apple-system; font-weight: bold;">Open!</p>
+                        <img src = "img/spaceCrate.png" style = "position: absolute; height: 50%; top: 50%; left: 50%; -webkit-transform: translate(-50%, -50%); z-index: 40;" id = "c1FinishedIMG">
+                    </div>
+                </div>
+
+                <div id = "crateTwoSection" style = "position: absolute; width: 16%; height: 28.45%; left: 33.2%; top: 37.2%; z-index: 6; cursor: pointer;">
+                    <img src = "img/plusCrate.png" style = "position: absolute; left: 50%; top: 50%; -webkit-transform: translate(-50%, -50%); width: 40%; display: none;" id = "c2plus">
+                    <div id = "c2Active" style = "display: none;">
+                        <p id = "c2timeText" style = "position: absolute; text-align: center; color: white; font-size: 10px; width: 100%; top: 6%; font-family: -apple-system;">4:02 Remaining</p>
+                        <img src = "img/spaceCrate.png" style = "position: absolute; height: 50%; top: 50%; left: 50%; -webkit-transform: translate(-50%, -50%);" id = "c2ActiveIMG">
+                        <p id = "c2openText" style = "position: absolute; text-align: center; color: white; font-size: 10px; width: 100%; bottom: 6%; font-family: -apple-system; font-weight: bold;">Open Now!</p>
+                    </div>
+                    <div id = "c2Closed" style = "display: none;">
+                        <p id = "c2startText" style = "position: absolute; text-align: center; color: white; font-size: 10px; width: 100%; top: 6%; font-family: -apple-system; font-weight: bold;">Start!</p>
+                        <img src = "img/spaceCrate.png" style = "position: absolute; height: 50%; top: 50%; left: 50%; -webkit-transform: translate(-50%, -50%);" id = "c2ClosedIMG">
+                    </div>
+                    <div id = "c2Finished" style = "display: block;">
+                        <p id = "c2finishedText" style = "position: absolute; text-align: center; color: white; font-size: 10px; width: 100%; top: 6%; font-family: -apple-system; font-weight: bold;">Open!</p>
+                        <img src = "img/spaceCrate.png" style = "position: absolute; height: 50%; top: 50%; left: 50%; -webkit-transform: translate(-50%, -50%); z-index: 40;" id = "c2FinishedIMG">
+                    </div>
+                </div>
+
+                <div id = "crateThreeSection" style = "position: absolute; width: 16%; height: 28.45%; left: 50.6%; top: 37.2%; z-index: 6; cursor: pointer;">
+                    <img src = "img/plusCrate.png" style = "position: absolute; left: 50%; top: 50%; -webkit-transform: translate(-50%, -50%); width: 40%; display: none;" id = "c3plus">
+                    <div id = "c3Active" style = "display: none;">
+                        <p id = "c3timeText" style = "position: absolute; text-align: center; color: white; font-size: 10px; width: 100%; top: 6%; font-family: -apple-system;">4:02 Remaining</p>
+                        <img src = "img/spaceCrate.png" style = "position: absolute; height: 50%; top: 50%; left: 50%; -webkit-transform: translate(-50%, -50%);" id = "c3ActiveIMG"> 
+                        <p id = "c3openText" style = "position: absolute; text-align: center; color: white; font-size: 10px; width: 100%; bottom: 6%; font-family: -apple-system; font-weight: bold;">Open Now!</p>
+                    </div>
+                    <div id = "c3Closed" style = "display: none;">
+                        <p id = "c3startText" style = "position: absolute; text-align: center; color: white; font-size: 10px; width: 100%; top: 6%; font-family: -apple-system; font-weight: bold;">Start!</p>
+                        <img src = "img/spaceCrate.png" style = "position: absolute; height: 50%; top: 50%; left: 50%; -webkit-transform: translate(-50%, -50%);" id = "c3ClosedIMG">
+                    </div>
+                    <div id = "c3Finished" style = "display: block;">
+                        <p id = "c3finishedText" style = "position: absolute; text-align: center; color: white; font-size: 10px; width: 100%; top: 6%; font-family: -apple-system; font-weight: bold;">Open!</p>
+                        <img src = "img/spaceCrate.png" style = "position: absolute; height: 50%; top: 50%; left: 50%; -webkit-transform: translate(-50%, -50%); z-index: 40;" id = "c3FinishedIMG">
+                    </div>
+                </div>
+
+                <div id = "crateFourSection" style = "position: absolute; width: 16%; height: 28.45%; left: 68%; top: 37.2%; z-index: 6; cursor: pointer;">
+                    <img src = "img/plusCrate.png" style = "position: absolute; left: 50%; top: 50%; -webkit-transform: translate(-50%, -50%); width: 40%; display: none;" id = "c4plus">
+                    <div id = "c4Active" style = "display: none;">
+                        <p id = "c4timeText" style = "position: absolute; text-align: center; color: white; font-size: 10px; width: 100%; top: 6%; font-family: -apple-system;">4:02 Remaining</p>
+                        <img src = "img/spaceCrate.png" style = "position: absolute; height: 50%; top: 50%; left: 50%; -webkit-transform: translate(-50%, -50%);" id = "c4ActiveIMG">
+                        <p id = "c4openText" style = "position: absolute; text-align: center; color: white; font-size: 10px; width: 100%; bottom: 6%; font-family: -apple-system; font-weight: bold;">Open Now!</p>
+                    </div>
+                    <div id = "c4Closed" style = "display: none;">
+                        <p id = "c4startText" style = "position: absolute; text-align: center; color: white; font-size: 10px; width: 100%; top: 6%; font-family: -apple-system; font-weight: bold;">Start!</p>
+                        <img src = "img/spaceCrate.png" style = "position: absolute; height: 50%; top: 50%; left: 50%; -webkit-transform: translate(-50%, -50%);" id = "c4ClosedIMG">
+                    </div>
+                    <div id = "c4Finished" style = "display: block;">
+                        <p id = "c4finishedText" style = "position: absolute; text-align: center; color: white; font-size: 10px; width: 100%; top: 6%; font-family: -apple-system; font-weight: bold;">Open!</p>
+                        <img src = "img/spaceCrate.png" style = "position: absolute; height: 50%; top: 50%; left: 50%; -webkit-transform: translate(-50%, -50%); z-index: 40;" id = "c4FinishedIMG">
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <div id = "mainScreen2">
+            <img src = "img/menuTwoBG.png" style = "position: fixed; width: 100%; height: 100%;">
+            <img src = "img/backArrow.png" style = "position: fixed; height: 8%; left: 3.5%; z-index: 2; top: 3.8%; cursor: pointer;" class = "btnHover" id = "backArrow">
+            <p class = "lootVal" id = "starVal">75</p>
+            <p class = "lootVal" id = "coinVal">4,359</p>
+            <img src = "img/storeIcon.png" style = "position: fixed; right: 3%; top: 3%; height: 9%; cursor: pointer;" class = "btnHover" id = "storeICN">
+
+            <div id = "upgradeScreen" style = "position: fixed; width: 100%; height: 100%; background-color: rgba(0,0,0,0.3); z-index: 3; display: none;">
+                <img src = "img/upgradeEngine.png" style = "position: fixed; left: 50%; top: 50%; -webkit-transform: translate(-50%, -50%); height: 70%; z-index: 1;" id = "upgradeImage">
+                <p id = "upgradeCost" style = "position: fixed; color: black; font-family: -apple-system; font-size: 15px; font-weight: bold; display: block; top: 56%; left: 50%; -webkit-transform: translate(-50%, -50%); z-index: 2;">Cost: $4000</p>
+                <div id = "purchaseSelector" style = "position: fixed; background-color: rgba(0,0,0,0.3); opacity: 0; height: 9.8%; width: 16%; left: 30.5%; top: 65.9%; z-index: 2; cursor: pointer;"></div>
+                <div id = "cancelSelector" style = "position: fixed; background-color: rgba(0,0,0,0.3); opacity: 0; height: 9.8%; width: 16%; right: 32.2%; top: 65.9%; z-index: 2; cursor: pointer;"></div>
+            </div>
+
+            <div id = "cantAfford" style = "position: fixed; width: 100%; height: 100%; background-color: rgba(0,0,0,0.3); z-index: 3; z-index: 5; display: none;">
+                <img src = "img/mrMoneyBags.png" style = "position: fixed; left: 50%; top: 50%; -webkit-transform: translate(-50%, -50%); height: 70%; z-index: 1; pointer-events: none;" id = "moneyBags">
+            </div>
+            
+
+
+            <img src = "img/engineUpgrade.png" style = "position: fixed; width: 9%; top: 20%; left: 26%; cursor: pointer;" class = "btnHover" id = "engineUpgrade">
+            <img src = "img/balanceUpgrade.png" style = "position: fixed; width: 9%; top: 20%; left: 39%; cursor: pointer;" class = "btnHover" id = "balanceUpgrade">
+            <img src = "img/tractionUpgrade.png" style = "position: fixed; width: 9%; top: 20%; left: 52%; cursor: pointer;" class = "btnHover" id = "tractionUpgrade">
+            <img src = "img/fuelUpgrade.png" style = "position: fixed; width: 9%; top: 20%; left: 65%; cursor: pointer;" class = "btnHover" id = "fuelUpgrade">
+
+            <p id = "enginePrice" style = "position: fixed; color: white; font-family: -apple-system; font-size: 10px; font-weight: bold; display: block; top: 38%; left: 30.5%; -webkit-transform: translate(-50%);">$4000</p>
+            <p id = "engineLevel" style = "position: fixed; color: white; font-family: -apple-system; font-size: 8px; font-weight: 400; display: block; top: 42%; left: 30.5%; -webkit-transform: translate(-50%);">LVL: 2/25</p>
+
+            <p id = "balancePrice" style = "position: fixed; color: white; font-family: -apple-system; font-size: 10px; font-weight: bold; display: block; top: 38%; left: 43.5%; -webkit-transform: translate(-50%);">$4000</p>
+            <p id = "balanceLevel" style = "position: fixed; color: white; font-family: -apple-system; font-size: 8px; font-weight: 400; display: block; top: 42%; left: 43.5%; -webkit-transform: translate(-50%);">LVL: 2/25</p>
+
+            <p id = "tractionPrice" style = "position: fixed; color: white; font-family: -apple-system; font-size: 10px; font-weight: bold; display: block; top: 38%; left: 56.5%; -webkit-transform: translate(-50%);">$4000</p>
+            <p id = "tractionLevel" style = "position: fixed; color: white; font-family: -apple-system; font-size: 8px; font-weight: 400; display: block; top: 42%; left: 56.5%; -webkit-transform: translate(-50%);">LVL: 2/25</p>
+
+            <p id = "fuelPrice" style = "position: fixed; color: white; font-family: -apple-system; font-size: 10px; font-weight: bold; display: block; top: 38%; left: 69.5%; -webkit-transform: translate(-50%);">$4000</p>
+            <p id = "fuelLevel" style = "position: fixed; color: white; font-family: -apple-system; font-size: 8px; font-weight: 400; display: block; top: 42%; left: 69.5%; -webkit-transform: translate(-50%);">LVL: 2/25</p>
+
+            <img src = "img/displaySportsCar.png" style = "position: fixed; width: 40%; bottom: 23%; left: 50%; -webkit-transform: translate(-50%); cursor: pointer;">
+            <p id = "carTitle" style = "position: fixed; color: white; font-family: -apple-system; font-size: 17px; font-weight: lighter; display: block; bottom: 12%; left: 50%; -webkit-transform: translate(-50%);">The Coupe</p>
+
+            <img src = "img/startBTN.png" style = "position: fixed; height: 14%; right: 4%; bottom: 4%; z-index: 2; cursor: pointer;" class = "btnHover" id = "startLevel">
+        </div>
+
+        <div id = "storeScreen">
+            <img src = "img/storeBg.png" style = "position: fixed; width: 100%; height: 100%;">
+            <img src = "img/backArrow.png" style = "position: fixed; height: 8%; left: 3.5%; z-index: 2; top: 3.8%; cursor: pointer;" class = "btnHover" id = "backArrow3">
+            <p class = "lootVal" id = "starVal">75</p>
+            <p class = "lootVal" id = "coinVal">4,359</p>
+            <img src = "img/restorePurchasesBTN.png" style = "position: absolute; height: 14%; right: 4%; bottom: 9.5%; z-index: 2; cursor: pointer;" class = "btnHover">
+
+            <div id = "cantAfford" style = "position: fixed; width: 100%; height: 100%; background-color: rgba(0,0,0,0.3); z-index: 90; display: none;">
+                <img src = "img/mrMoneyBags.png" style = "position: fixed; left: 50%; top: 50%; -webkit-transform: translate(-50%, -50%); height: 70%; z-index: 1; pointer-events: none;" id = "moneyBags">
+            </div>
+
+            <div id = "purchaseConfirmScreen" style = "position: fixed; width: 100%; height: 100%; background-color: rgba(0,0,0,0.3); z-index: 3; display: none; z-index: 50;">
+                <img src = "img/purchaseConfirmBG.png" style = "position: fixed; left: 50%; top: 50%; -webkit-transform: translate(-50%, -50%); height: 70%; z-index: 1;" id = "crateConfirmBG">
+                <p id = "openCost" style = "position: fixed; color: black; font-family: -apple-system; font-size: 15px; font-weight: bold; display: block; top: 56%; left: 50%; -webkit-transform: translate(-50%, -50%); z-index: 2;">Bronze Crate For 5 Stars</p>
+                <div id = "openSelector" style = "position: fixed; background-color: rgba(0,0,0,0.3); opacity: 0; height: 9.8%; width: 16%; left: 30.5%; top: 65.9%; z-index: 2; cursor: pointer;"></div>
+                <div id = "stopSelector" style = "position: fixed; background-color: rgba(0,0,0,0.3); opacity: 0; height: 9.8%; width: 16%; right: 32.2%; top: 65.9%; z-index: 2; cursor: pointer;"></div>
+            </div>
+
+            <div id = "crate1PurchaseBTN" style = "position: fixed; top: 28.3%; left: 4%; height: 13.4%; width: 7.54%; z-index: 4; cursor: pointer;" class = "btnHover">
+                <img src = "img/bronzeCrate.png" style = "position: absolute; top: 38%; left: 50%; height: 50%; -webkit-transform: translate(-50%, -50%);">
+                <img src = "img/5star.png" style = "position: absolute; height: 20%; bottom: 20%; left: 50%; -webkit-transform: translate(-50%, 50%);">
+            </div>
+
+            <div id = "crate2PurchaseBTN" style = "position: fixed; top: 28.3%; left: 12.1%; height: 13.4%; width: 7.54%; z-index: 4; cursor: pointer;" class = "btnHover">
+                <img src = "img/silverCrate.png" style = "position: absolute; top: 38%; left: 50%; height: 50%; -webkit-transform: translate(-50%, -50%);">
+                <img src = "img/7star.png" style = "position: absolute; height: 20%; bottom: 20%; left: 50%; -webkit-transform: translate(-50%, 50%);">
+            </div>
+
+            <div id = "crate3PurchaseBTN" style = "position: fixed; top: 28.3%; left: 20.1%; height: 13.4%; width: 7.54%; z-index: 4; cursor: pointer;" class = "btnHover">
+                <img src = "img/goldCrate.png" style = "position: absolute; top: 38%; left: 50%; height: 50%; -webkit-transform: translate(-50%, -50%);">
+                <img src = "img/10star.png" style = "position: absolute; height: 20%; bottom: 20%; left: 50%; -webkit-transform: translate(-50%, 50%);">
+            </div>
+
+            <div id = "crate4PurchaseBTN" style = "position: fixed; top: 28.3%; left: 28.2%; height: 13.4%; width: 7.54%; z-index: 4; cursor: pointer;" class = "btnHover">
+                <img src = "img/spaceCrate.png" style = "position: absolute; top: 38%; left: 50%; height: 50%; -webkit-transform: translate(-50%, -50%);">
+                <img src = "img/20star.png" style = "position: absolute; height: 20%; bottom: 20%; left: 50%; -webkit-transform: translate(-50%, 50%);">
+            </div>
+
+            <div id = "deal1PurchaseBTN" style = "position: fixed; top: 28.3%; left: 36.2%; height: 13.4%; width: 29.94%; z-index: 4; cursor: pointer;" class = "btnHover">
+                <!--<img src = "img/spaceCrate.png" style = "position: absolute; top: 38%; left: 50%; height: 50%; -webkit-transform: translate(-50%, -50%);">-->
+                <!--<img src = "img/20star.png" style = "position: absolute; height: 20%; bottom: 20%; left: 50%; -webkit-transform: translate(-50%, 50%);">-->
+            </div>
+
+            <div id = "deal2PurchaseBTN" style = "position: fixed; top: 28.3%; left: 66.6%; height: 13.4%; width: 29.4%; z-index: 4; cursor: pointer;" class = "btnHover">
+                <!--<img src = "img/spaceCrate.png" style = "position: absolute; top: 38%; left: 50%; height: 50%; -webkit-transform: translate(-50%, -50%);">-->
+                <!--<img src = "img/20star.png" style = "position: absolute; height: 20%; bottom: 20%; left: 50%; -webkit-transform: translate(-50%, 50%);">-->
+            </div>
+
+            <div id = "coin1PurchaseBTN" style = "position: fixed; top: 53%; left: 4%; height: 13.4%; width: 29.96%; z-index: 4; cursor: pointer;" class = "btnHover">
+                <img src = "img/GoldIAP1Promo.png" style = "position: absolute; top: 38%; left: 50%; height: 50%; -webkit-transform: translate(-50%, -50%);">
+                <p style = "position: absolute; height: 20%; bottom: 20%; left: 50%; -webkit-transform: translate(-50%, 50%); font-family: -apple-system;  display: block; color: white; font-size: 10px;">Small Pack 99&#8373</p>
+            </div>
+
+            <div id = "coin2PurchaseBTN" style = "position: fixed; top: 53%; left: 34.6%; height: 13.4%; width: 30.54%; z-index: 4; cursor: pointer;" class = "btnHover">
+                <img src = "img/GoldIAP2Promo.png" style = "position: absolute; top: 38%; left: 50%; height: 50%; -webkit-transform: translate(-50%, -50%);">
+                <p style = "position: absolute; height: 20%; bottom: 20%; left: 50%; -webkit-transform: translate(-50%, 50%); font-family: -apple-system;  display: block; color: white; font-size: 10px;">Large Pack $2.99</p>
+            </div>
+
+            <div id = "coin3PurchaseBTN" style = "position: fixed; top: 53%; left: 65.7%; height: 13.4%; width: 30.24%; z-index: 4; cursor: pointer;" class = "btnHover">
+                <img src = "img/GoldIAP3Promo.png" style = "position: absolute; top: 38%; left: 50%; height: 50%; -webkit-transform: translate(-50%, -50%);">
+                <p style = "position: absolute; height: 20%; bottom: 20%; left: 50%; -webkit-transform: translate(-50%, 50%); font-family: -apple-system;  display: block; color: white; font-size: 10px;">King Pack $9.99</p>
+            </div>
+
+            <div id = "star1PurchaseBTN" style = "position: fixed; top: 76.6%; left: 4.2%; height: 13.4%; width: 20.4%; z-index: 4; cursor: pointer;" class = "btnHover">
+                <img src = "img/StarIAP1Promo.png" style = "position: absolute; top: 38%; left: 50%; height: 50%; -webkit-transform: translate(-50%, -50%);">
+                <p style = "position: absolute; height: 20%; bottom: 20%; left: 50%; width: 100%; text-align: center; -webkit-transform: translate(-50%, 50%); font-family: -apple-system;  display: block; color: white; font-size: 10px;">Small Pack 99&#8373</p>
+            </div>
+
+            <div id = "star2PurchaseBTN" style = "position: fixed; top: 76.6%; left: 25.1%; height: 13.4%; width: 20.6%; z-index: 4; cursor: pointer;" class = "btnHover">
+                <img src = "img/StarIAP2Promo.png" style = "position: absolute; top: 38%; left: 50%; height: 50%; -webkit-transform: translate(-50%, -50%);">
+                <p style = "position: absolute; height: 20%; bottom: 20%; left: 50%; width: 100%; text-align: center; -webkit-transform: translate(-50%, 50%); font-family: -apple-system;  display: block; color: white; font-size: 10px;">Large Pack $1.99</p>
+            </div>
+
+            <div id = "star3PurchaseBTN" style = "position: fixed; top: 76.6%; left: 46.3%; height: 13.4%; width: 20.6%; z-index: 4; cursor: pointer;" class = "btnHover">
+                <img src = "img/StarIAP3Promo.png" style = "position: absolute; top: 38%; left: 50%; height: 50%; -webkit-transform: translate(-50%, -50%);">
+                <p style = "position: absolute; height: 20%; bottom: 20%; left: 50%; width: 100%; text-align: center; -webkit-transform: translate(-50%, 50%); font-family: -apple-system;  display: block; color: white; font-size: 10px;">King Pack $3.99</p>
+            </div>
+
+        </div>
+
+        <div id = "hillLevel">
+            <div id = "outOfFuel" style = "position: fixed; z-index: 1300; width: 100%; height: 100%; background-color: rgba(0,0,0,0.3); display: none;">
+                <img src = "img/outOfFuel.png" style = "position: fixed; height: 60%; top: 20%; -webkit-transform: translate(-50%); left: 50%;" id = "gameOverIMG">
+                <div id = "retryB1" style = "position: fixed; height: 9.11%; width: 15.24%; background-color: black; left: 27.9%; bottom: 25.6%; cursor: pointer; opacity: 0;"></div>
+                <div id = "retryB2" style = "position: fixed; height: 9.11%; width: 15.24%; background-color: black; right: 27.9%; bottom: 25.6%; cursor: pointer; opacity: 0;"></div>
+                <p id = "distanceTraveled" style = "position: fixed; color: black; font-family: -apple-system; font-weight: bold; display: block; top: 43%; left: 42%; -webkit-transform: translate(-50%); ">50m</p>
+                <p id = "coinsCollected" style = "position: fixed; color: black; font-family: -apple-system; font-weight: bold; display: block; top: 43%; right: 40%; -webkit-transform: translate(50%); ">45</p>
+                <p id = "distanceTraveledBest" style = "position: fixed; color: black; font-family: -apple-system; font-weight: bold; display: block; top: 56%; left: 42%; -webkit-transform: translate(-50%); ">50m</p>
+                <p id = "coinsCollectedTotal" style = "position: fixed; color: black; font-family: -apple-system; font-weight: bold; display: block; top: 56%; right: 40%; -webkit-transform: translate(50%); ">4500</p>
+            </div>
+            <img src = "img/hillLandBG.png" style = "display: none" id = "bg1">
+            <img src = "img/gameCoin.png" style = "position: fixed; z-index: 1200; height: 30px; top: 20px; left: 20px;">
+            <p id = "gameCoins" style = "position: fixed; color: white; font-family: -apple-system; z-index: 1200; font-weight: bold; display: block; left: 60px; top: 26px;">4,359</p>
+            <p id = "gameCoinsStroke" style = "position: fixed; -webkit-text-stroke: 2px rgba(0,0,0,0.1); opacity: 0.7; font-family: -apple-system; filter: blur(1px); font-weight: bold; z-index: 1199; display: block; left: 60px; top: 26px;">4,359</p>
+            <div id = "pauseScreen" style = "display: none;">
+                <div style = "position: fixed; z-index: 1500; width: 100%; height: 100%; background-color: rgba(0,0,0,0.3);" id = "pauseScreenBG"></div>
+                <img src = "img/resumeGame.png" style = "position: fixed; z-index: 1501; height: 12%; left: 50%; -webkit-transform: translate(-50%); top: 20%; cursor: pointer;" id = "resumeGame" class = "btnHover">
+                <img src = "img/quitGame.png" style = "position: fixed; z-index: 1501; height: 12%; left: 50%; -webkit-transform: translate(-50%); top: 35%; cursor: pointer;" id = "quitGame" class = "btnHover">
+                <img src = "img/restartGame.png" style = "position: fixed; z-index: 1501; height: 12%; left: 50%; -webkit-transform: translate(-50%); top: 50%; cursor: pointer;" id = "restartGame" class = "btnHover">
+            </div>
+            <img src = "img/pedalFWD.png" style = "position: fixed; z-index: 1000; height: 120px; right: 40px; bottom: 30px; cursor: pointer;" id = "pedalFWD">
+            <img src = "img/pedalBWD.png" style = "position: fixed; z-index: 1000; height: 120px; left: 40px; bottom: 30px; cursor: pointer;" id = "pedalBWD">
+            <img src = "img/pauseBtn.png" style = "position: fixed; z-index: 1000; height: 40px; width: 40px; top: 20px; right: 20px; cursor: pointer;" id = "pauseBtn">
+            <div style = "position: fixed; z-index: 1001; left: 50%; overflow: hidden;" id = "fuelbar">
+                <img src = "img/fuelGauge.png" style = "position: absolute; width: 100%; height: 100%;" id = "fuelbarIMG">
+            </div>
+            <div id = "speedometerGroup" style = "position: fixed; z-index: 999; max-width: 40%; max-height: 140px; width: 40%; height: 140px; -webkit-transform: translate(-50%); bottom: 30px; left: 50%;">
+                <img src = "img/speedometer.png" style = "position: absolute; max-width: 100%; max-height: 140px; bottom: 0px;" id = "speedometer">
+                <img src = "img/speedometerPointer.png" style = "position: absolute; z-index: 1000; height: 25%; -webkit-transform-origin: center 87%;" id = "speedPointer">
+                <div style = "position: fixed; z-index: 1001; left: 50%; overflow: hidden;" id = "fuelbar">
+                    <img src = "img/fuelGauge.png" style = "position: absolute; width: 100%; height: 100%;" id = "fuelbarIMG">
+                </div>
+            </div>
+        </div>
+
+    	<script type = "text/javascript" src = "js/jquery-3.1.1.min.js"></script>
+        <script type = "text/javascript" src = "js/matter.js"></script>
+        <script type = "text/javascript" src = "js/decomp.js"></script>
+        <script type = "text/javascript" src = "js/hammer-time.min.js"></script>
+        <script type = "text/javascript" src = "js/hammer.min.js"></script>
+        <script type = "text/javascript" src = "js/touch-emulator.js"></script>
+        <script defer type = "text/javascript" src = "js/index.js"></script>
+        
+    </body>
+    
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
